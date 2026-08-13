@@ -1,0 +1,25 @@
+# Flutter / Dart gitignore
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.pub-cache/
+.pub/
+build/
+
+# Android & iOS build artifacts
+android/app/debug/
+android/app/profile/
+android/app/release/
+ios/Flutter/App.framework
+ios/Flutter/Flutter.framework
+ios/Flutter/Flutter.podspec
+ios/Pods/
+
+# Environment secrets
+.env
+
+# IDE Files
+.vscode/
+.idea/
+*.swp
+*.swo
