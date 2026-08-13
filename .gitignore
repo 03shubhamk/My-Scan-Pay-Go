@@ -1,8 +1,6 @@
-# Excluded Applications per Repository Scope
+# Excluded Design Draft Directories
 Admin pannel/
 Cust app/
-admin-dashboard/
-customer-app/
 
 # Dependencies & Build Outputs
 node_modules/
