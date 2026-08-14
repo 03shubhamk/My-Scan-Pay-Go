@@ -7,7 +7,11 @@ import { DashboardOverview } from './features/dashboard/DashboardOverview';
 import { ProductsPage } from './features/products/ProductsPage';
 import { AddProductPage } from './features/products/AddProductPage';
 import { EditProductPage } from './features/products/EditProductPage';
-import { MainLayout } from './components/MainLayout';
+import { OrdersPage } from './features/orders/OrdersPage';
+import { ExitScanPage } from './features/exit-verifier/ExitScanPage';
+import { CustomersPage } from './features/customers/CustomersPage';
+import { ReportsPage } from './features/reports/ReportsPage';
+import { SettingsPage } from './features/settings/SettingsPage';
 
 export const App: React.FC = () => {
   return (
@@ -26,7 +30,7 @@ export const App: React.FC = () => {
               </ProtectedRoute>
             }
           />
-          
+
           {/* Products Management Routes */}
           <Route
             path="/products"
@@ -53,68 +57,52 @@ export const App: React.FC = () => {
             }
           />
 
+          {/* Orders & Payments */}
           <Route
             path="/orders"
             element={
               <ProtectedRoute>
-                <MainLayout pageTitle="Orders & Payments">
-                  <div className="p-6 bg-white rounded-lg border border-surface-border space-y-2">
-                    <h2 className="text-xl font-bold">Customer Orders & Razorpay Logs</h2>
-                    <p className="text-text-secondary text-sm">Real-time order monitoring and transaction details.</p>
-                  </div>
-                </MainLayout>
+                <OrdersPage />
               </ProtectedRoute>
             }
           />
+
+          {/* Exit Gate Verifier */}
           <Route
             path="/exit-verifier"
             element={
               <ProtectedRoute>
-                <MainLayout pageTitle="Exit Gate Verifier">
-                  <div className="p-6 bg-white rounded-lg border border-surface-border space-y-2">
-                    <h2 className="text-xl font-bold">Exit QR Verification Counter</h2>
-                    <p className="text-text-secondary text-sm">Scan customer exit tokens and verify item counts.</p>
-                  </div>
-                </MainLayout>
+                <ExitScanPage />
               </ProtectedRoute>
             }
           />
+
+          {/* Customer Accounts */}
           <Route
             path="/customers"
             element={
               <ProtectedRoute>
-                <MainLayout pageTitle="Customer Accounts">
-                  <div className="p-6 bg-white rounded-lg border border-surface-border space-y-2">
-                    <h2 className="text-xl font-bold">Registered Customer Profiles</h2>
-                    <p className="text-text-secondary text-sm">User accounts and shopping history.</p>
-                  </div>
-                </MainLayout>
+                <CustomersPage />
               </ProtectedRoute>
             }
           />
+
+          {/* Reports & Analytics */}
           <Route
             path="/reports"
             element={
               <ProtectedRoute>
-                <MainLayout pageTitle="Reports & Analytics">
-                  <div className="p-6 bg-white rounded-lg border border-surface-border space-y-2">
-                    <h2 className="text-xl font-bold">Sales & Peak Hours Analytics</h2>
-                    <p className="text-text-secondary text-sm">Store performance graphs and inventory turnover.</p>
-                  </div>
-                </MainLayout>
+                <ReportsPage />
               </ProtectedRoute>
             }
           />
+
+          {/* Store Settings */}
           <Route
             path="/settings"
             element={
               <ProtectedRoute>
-                <MainLayout pageTitle="Store Settings">
-                  <div className="p-6 bg-white rounded-lg border border-surface-border space-y-2">
-                    <h2 className="text-xl font-bold">Store & Gate Configuration</h2>
-                    <p className="text-text-secondary text-sm">System parameters and security keys.</p>
-                  </div>
-                </MainLayout>
+                <SettingsPage />
               </ProtectedRoute>
             }
           />
