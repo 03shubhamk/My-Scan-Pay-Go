@@ -8,6 +8,7 @@ export interface ModalProps {
   children: React.ReactNode;
   footer?: React.ReactNode;
   maxWidth?: 'sm' | 'md' | 'lg' | 'xl';
+  size?: 'sm' | 'md' | 'lg' | 'xl';
 }
 
 export const Modal: React.FC<ModalProps> = ({
@@ -16,7 +17,8 @@ export const Modal: React.FC<ModalProps> = ({
   title,
   children,
   footer,
-  maxWidth = 'md',
+  maxWidth,
+  size = 'md',
 }) => {
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -34,6 +36,8 @@ export const Modal: React.FC<ModalProps> = ({
 
   if (!isOpen) return null;
 
+  const targetSize = maxWidth || size;
+
   const maxWidths = {
     sm: 'max-w-sm',
     md: 'max-w-md',
@@ -50,7 +54,7 @@ export const Modal: React.FC<ModalProps> = ({
       />
 
       {/* Modal Dialog Container */}
-      <div className={`relative bg-white rounded-xl shadow-modal w-full ${maxWidths[maxWidth]} z-10 border border-surface-border overflow-hidden animate-in fade-in zoom-in-95 duration-150`}>
+      <div className={`relative bg-white rounded-xl shadow-modal w-full ${maxWidths[targetSize]} z-10 border border-surface-border overflow-hidden animate-in fade-in zoom-in-95 duration-150`}>
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-surface-border bg-slate-50/50">
           <h3 className="text-base font-semibold text-text-primary">{title}</h3>

@@ -2,7 +2,7 @@ import React from 'react';
 
 export interface BadgeProps {
   children: React.ReactNode;
-  variant?: 'success' | 'warning' | 'danger' | 'info' | 'neutral';
+  variant?: 'success' | 'warning' | 'danger' | 'info' | 'neutral' | 'secondary';
   showDot?: boolean;
   className?: string;
 }
@@ -13,6 +13,8 @@ export const Badge: React.FC<BadgeProps> = ({
   showDot = true,
   className = '',
 }) => {
+  const actualVariant = variant === 'secondary' ? 'neutral' : variant;
+
   const variantStyles = {
     success: 'bg-status-successBg text-status-successText border-emerald-200',
     warning: 'bg-status-warningBg text-status-warningText border-amber-200',
@@ -30,8 +32,8 @@ export const Badge: React.FC<BadgeProps> = ({
   };
 
   return (
-    <span className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 text-xs font-semibold rounded-full border ${variantStyles[variant]} ${className}`}>
-      {showDot && <span className={`w-1.5 h-1.5 rounded-full ${dotStyles[variant]}`} />}
+    <span className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 text-xs font-semibold rounded-full border ${variantStyles[actualVariant]} ${className}`}>
+      {showDot && <span className={`w-1.5 h-1.5 rounded-full ${dotStyles[actualVariant]}`} />}
       {children}
     </span>
   );
