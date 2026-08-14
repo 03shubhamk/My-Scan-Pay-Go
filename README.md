@@ -122,6 +122,7 @@ scan-pay-go/
 
 ---
 
+
 ## 📜 Documentation
 - See [`docs/architecture.md`](docs/architecture.md) for full technical design details.
 - See [`docs/api-spec.md`](docs/api-spec.md) for API endpoint specifications.
