@@ -9,8 +9,8 @@ describe('JWT Authentication Middleware Security Tests', () => {
     role: 'customer' | 'admin' | 'staff';
   }
 
-  const signToken = (payload: UserPayload, expiresIn = '1h'): string => {
-    return jwt.sign(payload, jwtSecret, { expiresIn });
+  const signToken = (payload: UserPayload): string => {
+    return jwt.sign(payload, jwtSecret as jwt.Secret, { expiresIn: '1h' });
   };
 
   const verifyToken = (token: string): UserPayload => {
