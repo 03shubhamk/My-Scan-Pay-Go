@@ -162,7 +162,7 @@ class PaymentPendingScreen extends StatelessWidget {
             const SizedBox(height: 12),
             AppButton(
               text: 'Back to Home',
-              variant: AppButtonVariant.ghost,
+              variant: AppButtonVariant.text,
               onPressed: () {
                 Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
               },

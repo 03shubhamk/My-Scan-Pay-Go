@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../models/order_model.dart';
 import '../../../shared/widgets/app_button.dart';
 import '../../../shared/widgets/app_card.dart';
-import '../../orders/orders_provider.dart';
 import 'exit_qr_screen.dart';
 
 class DigitalReceiptScreen extends StatelessWidget {
