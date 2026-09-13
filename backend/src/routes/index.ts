@@ -7,6 +7,7 @@ import paymentRoutes from './paymentRoutes';
 import orderRoutes from './orderRoutes';
 import exitRoutes from './exitRoutes';
 import adminRoutes from './adminRoutes';
+import inventoryRoutes from './inventoryRoutes';
 
 const router = Router();
 
@@ -16,6 +17,7 @@ router.use('/products', productRoutes);
 router.use('/checkout', checkoutRoutes);
 router.use('/payments', paymentRoutes);
 router.use('/orders', orderRoutes);
+router.use('/inventory', inventoryRoutes);
 router.use('/exit-verification', exitRoutes);
 router.use('/admin', adminRoutes);
 

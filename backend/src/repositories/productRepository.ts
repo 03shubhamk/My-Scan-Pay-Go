@@ -15,7 +15,7 @@ export interface ProductWithInventory {
 }
 
 // In-memory fallback product catalog for offline testing & seeding
-const inMemoryProducts: Map<string, ProductWithInventory> = new Map();
+export const inMemoryProducts: Map<string, ProductWithInventory> = new Map();
 
 // Populate initial sample products into in-memory store
 const seedInitialProducts = () => {

@@ -19,7 +19,14 @@ export const env = {
   // Security & Token Secrets
   JWT_SECRET: process.env.JWT_SECRET || 'dev_jwt_secret_key_12345',
   JWT_EXPIRES_IN: process.env.JWT_EXPIRES_IN || '1d',
+  EXIT_QR_SECRET: process.env.EXIT_QR_SECRET || 'exit_qr_hmac_secret_key_45678',
+
+  // Razorpay Gateway
+  RAZORPAY_KEY_ID: process.env.RAZORPAY_KEY_ID || 'rzp_test_YourKeyIdHere',
+  RAZORPAY_KEY_SECRET: process.env.RAZORPAY_KEY_SECRET || 'YourRazorpaySecretHere',
+  RAZORPAY_WEBHOOK_SECRET: process.env.RAZORPAY_WEBHOOK_SECRET || 'YourRazorpayWebhookSecretHere',
 
   // CORS
   CORS_ORIGIN: process.env.CORS_ORIGIN || '*',
 };
+
