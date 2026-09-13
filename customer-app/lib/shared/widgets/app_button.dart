@@ -76,7 +76,6 @@ class AppButton extends StatelessWidget {
           child: Text(text),
         );
       case AppButtonVariant.primary:
-      default:
         return SizedBox(
           height: height,
           width: double.infinity,

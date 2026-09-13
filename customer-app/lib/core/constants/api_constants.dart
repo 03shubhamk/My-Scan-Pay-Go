@@ -1,9 +1,12 @@
-import 'dart:io';
+import 'package:flutter/foundation.dart';
 
 class ApiConstants {
   // Dynamically resolves host depending on platform (Android Emulator vs Web/Desktop/iOS)
   static String get baseUrl {
-    if (Platform.isAndroid) {
+    if (kIsWeb) {
+      return 'http://localhost:5000/api';
+    }
+    if (defaultTargetPlatform == TargetPlatform.android) {
       return 'http://10.0.2.2:5000/api';
     }
     return 'http://localhost:5000/api';

@@ -8,6 +8,7 @@ import 'features/auth/screens/login_screen.dart';
 import 'features/auth/screens/register_screen.dart';
 import 'features/cart/cart_provider.dart';
 import 'features/orders/orders_provider.dart';
+import 'features/payment/payment_provider.dart';
 import 'features/home/screens/main_navigation_screen.dart';
 
 void main() {
@@ -25,6 +26,7 @@ class ScanPayGoCustomerApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => AuthProvider()),
         ChangeNotifierProvider(create: (_) => CartProvider()),
         ChangeNotifierProvider(create: (_) => OrdersProvider()),
+        ChangeNotifierProvider(create: (_) => PaymentProvider()),
       ],
       child: MaterialApp(
         title: 'Scan. Pay. Go.',
