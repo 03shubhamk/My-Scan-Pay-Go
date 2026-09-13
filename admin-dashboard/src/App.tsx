@@ -7,6 +7,7 @@ import { DashboardOverview } from './features/dashboard/DashboardOverview';
 import { ProductsPage } from './features/products/ProductsPage';
 import { AddProductPage } from './features/products/AddProductPage';
 import { EditProductPage } from './features/products/EditProductPage';
+import { InventoryPage } from './features/inventory/InventoryPage';
 import { OrdersPage } from './features/orders/OrdersPage';
 import { ExitScanPage } from './features/exit-verifier/ExitScanPage';
 import { CustomersPage } from './features/customers/CustomersPage';
@@ -53,6 +54,16 @@ export const App: React.FC = () => {
             element={
               <ProtectedRoute>
                 <EditProductPage />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Inventory Management Route */}
+          <Route
+            path="/inventory"
+            element={
+              <ProtectedRoute>
+                <InventoryPage />
               </ProtectedRoute>
             }
           />
