@@ -5,7 +5,12 @@ import '../../core/network/api_client.dart';
 
 class AuthProvider extends ChangeNotifier {
   static const String _tokenStorageKey = 'scan_pay_go_jwt_token';
-  final FlutterSecureStorage _storage = const FlutterSecureStorage();
+  final FlutterSecureStorage _storage = const FlutterSecureStorage(
+    webOptions: WebOptions(
+      dbName: 'scan_pay_go_db',
+      publicKey: 'scan_pay_go_key',
+    ),
+  );
 
   String? _token;
   Map<String, dynamic>? _user;

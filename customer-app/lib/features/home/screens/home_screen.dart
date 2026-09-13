@@ -20,7 +20,7 @@ class HomeScreen extends StatelessWidget {
             ),
             const SizedBox(width: 12),
             const Column(
-              crossAxisAlignment: CrossAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   'Scan. Pay. Go.',
@@ -44,7 +44,7 @@ class HomeScreen extends StatelessWidget {
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
-          crossAxisAlignment: CrossAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Banner Card matching Stitch styling
             Container(
@@ -66,7 +66,7 @@ class HomeScreen extends StatelessWidget {
                 ],
               ),
               child: Column(
-                crossAxisAlignment: CrossAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Text(
                     'No Billing Queues!',

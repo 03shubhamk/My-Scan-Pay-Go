@@ -1,21 +1,35 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../models/order_model.dart';
 import '../../../shared/widgets/app_button.dart';
 import '../../../shared/widgets/app_card.dart';
 import '../../auth/auth_provider.dart';
 import '../../cart/cart_provider.dart';
+import '../../payment/payment_provider.dart';
+import '../../payment/screens/payment_failed_screen.dart';
+import '../../payment/screens/payment_pending_screen.dart';
+import '../../payment/screens/payment_processing_screen.dart';
+import '../../payment/screens/payment_success_screen.dart';
+import '../../payment/screens/razorpay_checkout_sheet.dart';
 import '../orders_provider.dart';
-import 'order_summary_screen.dart';
 
-class CheckoutScreen extends StatelessWidget {
+class CheckoutScreen extends StatefulWidget {
   const CheckoutScreen({super.key});
+
+  @override
+  State<CheckoutScreen> createState() => _CheckoutScreenState();
+}
+
+class _CheckoutScreenState extends State<CheckoutScreen> {
+  bool _isProcessingCheckout = false;
 
   @override
   Widget build(BuildContext context) {
     final cart = context.watch<CartProvider>();
     final auth = context.watch<AuthProvider>();
     final ordersProvider = context.watch<OrdersProvider>();
+    final paymentProvider = context.watch<PaymentProvider>();
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -27,7 +41,7 @@ class CheckoutScreen extends StatelessWidget {
           onPressed: () => Navigator.pop(context),
         ),
         title: const Text(
-          'Checkout & Review',
+          'Checkout & Pay',
           style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800, color: AppColors.onSurface),
         ),
       ),
@@ -127,7 +141,8 @@ class CheckoutScreen extends StatelessWidget {
                                       child: Image.network(
                                         item.product.imageUrl!,
                                         fit: BoxFit.cover,
-                                        errorBuilder: (_, __, ___) => const Icon(Icons.inventory_2_outlined, color: AppColors.outline),
+                                        errorBuilder: (_, __, ___) =>
+                                            const Icon(Icons.inventory_2_outlined, color: AppColors.outline),
                                       ),
                                     )
                                   : const Icon(Icons.inventory_2_outlined, color: AppColors.outline),
@@ -153,7 +168,8 @@ class CheckoutScreen extends StatelessWidget {
                             ),
                             Text(
                               '₹${item.subtotal.toStringAsFixed(2)}',
-                              style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 15, color: AppColors.onSurface),
+                              style: const TextStyle(
+                                  fontWeight: FontWeight.w800, fontSize: 15, color: AppColors.onSurface),
                             ),
                           ],
                         ),
@@ -163,7 +179,7 @@ class CheckoutScreen extends StatelessWidget {
 
                   const SizedBox(height: 24),
                   const Text(
-                    'Payment & Price Calculation',
+                    'Payment Summary',
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800, color: AppColors.onSurface),
                   ),
                   const SizedBox(height: 12),
@@ -175,16 +191,20 @@ class CheckoutScreen extends StatelessWidget {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            const Text('Items Subtotal', style: TextStyle(color: AppColors.textSecondary, fontSize: 14)),
-                            Text('₹${cart.subtotalAmount.toStringAsFixed(2)}', style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
+                            const Text('Items Subtotal',
+                                style: TextStyle(color: AppColors.textSecondary, fontSize: 14)),
+                            Text('₹${cart.subtotalAmount.toStringAsFixed(2)}',
+                                style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
                           ],
                         ),
                         const SizedBox(height: 8),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            const Text('Estimated GST (5%)', style: TextStyle(color: AppColors.textSecondary, fontSize: 14)),
-                            Text('₹${cart.estimatedTax.toStringAsFixed(2)}', style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
+                            const Text('Estimated GST (5%)',
+                                style: TextStyle(color: AppColors.textSecondary, fontSize: 14)),
+                            Text('₹${cart.estimatedTax.toStringAsFixed(2)}',
+                                style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
                           ],
                         ),
                         const Divider(height: 24, thickness: 1),
@@ -194,13 +214,15 @@ class CheckoutScreen extends StatelessWidget {
                             const Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text('Estimated Order Total', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 15)),
-                                Text('Recalculated authoritatively by backend', style: TextStyle(fontSize: 10, color: AppColors.textSecondary)),
+                                Text('Grand Total', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 15)),
+                                Text('Recalculated authoritatively by backend',
+                                    style: TextStyle(fontSize: 10, color: AppColors.textSecondary)),
                               ],
                             ),
                             Text(
                               '₹${cart.grandTotal.toStringAsFixed(2)}',
-                              style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 20, color: AppColors.primary),
+                              style: const TextStyle(
+                                  fontWeight: FontWeight.w900, fontSize: 20, color: AppColors.primary),
                             ),
                           ],
                         ),
@@ -208,39 +230,188 @@ class CheckoutScreen extends StatelessWidget {
                     ),
                   ),
 
-                  const SizedBox(height: 32),
+                  const SizedBox(height: 16),
 
-                  // Submit Order Button
+                  // Razorpay badge
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                    decoration: BoxDecoration(
+                      color: AppColors.surfaceContainerLow,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: const Row(
+                      children: [
+                        Icon(Icons.shield_outlined, color: AppColors.primary, size: 20),
+                        SizedBox(width: 10),
+                        Expanded(
+                          child: Text(
+                            'Secured by Razorpay • 256-bit SSL Cryptographic Verification',
+                            style: TextStyle(fontSize: 11, color: AppColors.textSecondary, fontWeight: FontWeight.w500),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  const SizedBox(height: 28),
+
+                  // Pay with Razorpay Button
                   AppButton(
-                    text: 'Confirm & Place Order',
-                    icon: Icons.check_circle_outline,
-                    isLoading: ordersProvider.isLoading,
-                    onPressed: ordersProvider.isLoading
+                    text: 'Pay ₹${cart.grandTotal.toStringAsFixed(2)} with Razorpay',
+                    icon: Icons.lock_outline,
+                    isLoading: _isProcessingCheckout || ordersProvider.isLoading || paymentProvider.isProcessing,
+                    onPressed: (_isProcessingCheckout || ordersProvider.isLoading || paymentProvider.isProcessing)
                         ? null
-                        : () async {
-                            final newOrder = await ordersProvider.createOrder(
-                              items: cart.items,
-                              token: auth.token,
-                            );
-
-                            if (newOrder != null && context.mounted) {
-                              cart.clearCart();
-                              Navigator.pushReplacement(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => OrderSummaryScreen(order: newOrder),
-                                ),
-                              );
-                            } else if (context.mounted && ordersProvider.errorMessage != null) {
-                              _showErrorDialog(context, ordersProvider.errorMessage!);
-                            }
-                          },
+                        : () => _startPaymentFlow(context),
                   ),
                   const SizedBox(height: 24),
                 ],
               ),
             ),
     );
+  }
+
+  Future<void> _startPaymentFlow(BuildContext context) async {
+    final cart = context.read<CartProvider>();
+    final auth = context.read<AuthProvider>();
+    final ordersProvider = context.read<OrdersProvider>();
+    final paymentProvider = context.read<PaymentProvider>();
+
+    setState(() => _isProcessingCheckout = true);
+
+    try {
+      // Step 1: Create Order on Backend
+      final newOrder = await ordersProvider.createOrder(
+        items: cart.items,
+        token: auth.token,
+      );
+
+      if (newOrder == null) {
+        setState(() => _isProcessingCheckout = false);
+        if (mounted && ordersProvider.errorMessage != null) {
+          _showErrorDialog(context, ordersProvider.errorMessage!);
+        }
+        return;
+      }
+
+      // Step 2: Create Razorpay Order on Backend
+      final razorpayOrder = await paymentProvider.initiatePayment(
+        orderId: newOrder.id,
+        token: auth.token,
+      );
+
+      setState(() => _isProcessingCheckout = false);
+
+      if (razorpayOrder == null) {
+        if (mounted && paymentProvider.errorMessage != null) {
+          _showErrorDialog(context, paymentProvider.errorMessage!);
+        }
+        return;
+      }
+
+      if (!mounted) return;
+
+      // Step 3: Open Razorpay Checkout Sheet
+      await RazorpayCheckoutSheet.show(
+        context: context,
+        orderData: razorpayOrder,
+        onSuccess: (paymentId, orderId, signature) async {
+          _processVerification(
+            context: context,
+            order: newOrder,
+            razorpayPaymentId: paymentId,
+            razorpayOrderId: orderId,
+            razorpaySignature: signature,
+          );
+        },
+        onFailure: (code, message) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => PaymentFailedScreen(
+                orderId: newOrder.id,
+                amount: newOrder.totalAmount,
+                errorMessage: message,
+                onRetry: () {
+                  Navigator.pop(context);
+                  _startPaymentFlow(context);
+                },
+              ),
+            ),
+          );
+        },
+      );
+    } catch (e) {
+      setState(() => _isProcessingCheckout = false);
+      if (mounted) {
+        _showErrorDialog(context, e.toString());
+      }
+    }
+  }
+
+  Future<void> _processVerification({
+    required BuildContext context,
+    required OrderModel order,
+    required String razorpayPaymentId,
+    required String razorpayOrderId,
+    required String razorpaySignature,
+  }) async {
+    final cart = context.read<CartProvider>();
+    final auth = context.read<AuthProvider>();
+    final paymentProvider = context.read<PaymentProvider>();
+
+    // Open Processing Screen
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => PaymentProcessingScreen(
+          orderId: order.id,
+          totalAmount: order.totalAmount,
+        ),
+      ),
+    );
+
+    // Call Backend Cryptographic Verification
+    final result = await paymentProvider.handlePaymentSuccess(
+      razorpayPaymentId: razorpayPaymentId,
+      razorpayOrderId: razorpayOrderId,
+      razorpaySignature: razorpaySignature,
+      token: auth.token,
+    );
+
+    if (!mounted) return;
+
+    if (result != null) {
+      // Clear Cart on verified success
+      cart.clearCart();
+
+      // Navigate to Success Screen
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => PaymentSuccessScreen(
+            paymentResult: result,
+            amount: order.totalAmount,
+          ),
+        ),
+      );
+    } else {
+      // Navigate to Failed Screen
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => PaymentFailedScreen(
+            orderId: order.id,
+            amount: order.totalAmount,
+            errorMessage: paymentProvider.errorMessage ?? 'Payment signature verification failed.',
+            onRetry: () {
+              Navigator.pop(context);
+              _startPaymentFlow(context);
+            },
+          ),
+        ),
+      );
+    }
   }
 
   void _showErrorDialog(BuildContext context, String message) {
@@ -252,7 +423,7 @@ class CheckoutScreen extends StatelessWidget {
           children: [
             Icon(Icons.error_outline, color: AppColors.error),
             SizedBox(width: 8),
-            Text('Order Failed', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 18)),
+            Text('Checkout Error', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 18)),
           ],
         ),
         content: Text(message),

@@ -5,6 +5,8 @@ import '../../../shared/widgets/app_button.dart';
 import '../../../shared/widgets/app_card.dart';
 import '../../auth/auth_provider.dart';
 import '../orders_provider.dart';
+import 'digital_receipt_screen.dart';
+import 'exit_qr_screen.dart';
 
 class OrderDetailsScreen extends StatefulWidget {
   final String orderId;
@@ -329,6 +331,43 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
             ),
           ),
           const SizedBox(height: 24),
+
+          // Digital Receipt and Exit Actions
+          AppButton(
+            text: 'View Full Digital Invoice',
+            icon: Icons.receipt_long_outlined,
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => DigitalReceiptScreen(
+                    order: order,
+                    exitQrToken: 'SPG-EXIT-${order.id.substring(0, order.id.length > 8 ? 8 : order.id.length).toUpperCase()}',
+                  ),
+                ),
+              );
+            },
+          ),
+          const SizedBox(height: 12),
+          AppButton(
+            text: 'Display Exit Turnstile QR',
+            variant: AppButtonVariant.outline,
+            icon: Icons.qr_code_2_rounded,
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ExitQrScreen(
+                    orderId: order.id,
+                    orderNumber: order.orderNumber,
+                    exitToken: 'SPG-EXIT-${order.id.substring(0, order.id.length > 8 ? 8 : order.id.length).toUpperCase()}',
+                    itemCount: order.items.fold(0, (sum, item) => sum + item.quantity),
+                  ),
+                ),
+              );
+            },
+          ),
+          const SizedBox(height: 32),
         ],
       ),
     );
