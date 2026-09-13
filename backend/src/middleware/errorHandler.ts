@@ -8,7 +8,7 @@ export const errorHandler = (
   res: Response,
   _next: NextFunction
 ): void => {
-  const statusCode = err instanceof AppError ? err.statusCode : 500;
+  const statusCode = (err as any).statusCode || (err as any).status || (err instanceof AppError ? err.statusCode : 500);
   const message = err.message || 'Internal Server Error';
 
   if (env.NODE_ENV !== 'test') {
