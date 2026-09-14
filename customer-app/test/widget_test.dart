@@ -8,5 +8,10 @@ void main() {
 
     // Verify that app widget renders
     expect(find.byType(ScanPayGoCustomerApp), findsOneWidget);
+
+    // Pump past the 2-second splash screen timer
+    await tester.pump(const Duration(seconds: 3));
+    await tester.pumpAndSettle();
   });
 }
+
