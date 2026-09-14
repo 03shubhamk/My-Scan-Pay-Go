@@ -191,7 +191,16 @@ export class PaymentRepository {
         `;
         const exitRes = await client.query(upsertExitQuery, [orderId, exitVerificationToken]);
 
-        // 4. Atomically Deduct Inventory for items in this order
+        // 4. Lock & Atomically Deduct Inventory for items in this order (Race Condition Prevention)
+        const lockInventoryQuery = `
+          SELECT i.id, i.product_id, i.quantity
+          FROM inventory i
+          JOIN order_items oi ON i.product_id = oi.product_id
+          WHERE oi.order_id = $1
+          FOR UPDATE OF i
+        `;
+        await client.query(lockInventoryQuery, [orderId]);
+
         const deductInventoryQuery = `
           UPDATE inventory i
           SET quantity = GREATEST(0, i.quantity - oi.quantity), updated_at = CURRENT_TIMESTAMP
