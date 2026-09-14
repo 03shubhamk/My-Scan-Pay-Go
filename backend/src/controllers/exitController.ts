@@ -1,5 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
+import { AuthRequest } from '../types';
 import { exitService } from '../services/exitService';
+import { orderRepository } from '../repositories/orderRepository';
 
 export const verifyExitToken = async (
   req: Request,
@@ -49,12 +51,41 @@ export const getExitLogs = async (
 };
 
 export const getExitStatus = async (
-  req: Request,
+  req: AuthRequest,
   res: Response,
   next: NextFunction
 ): Promise<void> => {
   try {
     const { orderId } = req.params;
+    const userId = req.user?.userId;
+    const userRole = req.user?.role;
+
+    if (!userId) {
+      res.status(401).json({
+        success: false,
+        message: 'Authentication required',
+      });
+      return;
+    }
+
+    // Tenancy Check: Verify that requester is either the order owner or a store administrator
+    const order = await orderRepository.findById(orderId);
+    if (!order) {
+      res.status(404).json({
+        success: false,
+        message: 'Order not found',
+      });
+      return;
+    }
+
+    if (order.user_id !== userId && userRole !== 'ADMIN') {
+      res.status(403).json({
+        success: false,
+        message: 'Access denied: You are not authorized to view exit verification for this order',
+      });
+      return;
+    }
+
     const status = await exitService.getExitStatusByOrderId(orderId);
 
     if (!status) {

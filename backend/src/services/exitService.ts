@@ -1,4 +1,5 @@
 import { exitRepository, ExitVerificationResult, ExitLogItem } from '../repositories/exitRepository';
+import { emitExitVerified } from '../socket/socketServer';
 
 export class ExitService {
   /**
@@ -11,7 +12,25 @@ export class ExitService {
       throw err;
     }
 
-    return await exitRepository.verifyExitToken(token.trim(), verifierNode);
+    const result = await exitRepository.verifyExitToken(token.trim(), verifierNode);
+
+    // Safe Real-Time Socket.IO Notification (Non-blocking)
+    try {
+      if (result && result.verificationStatus === 'VERIFIED') {
+        emitExitVerified({
+          orderId: result.orderId,
+          orderNumber: result.orderNumber,
+          customerName: result.customerName || 'Customer',
+          verifierNode: result.verifierNode || verifierNode || 'Exit Gate Turnstile #1',
+          verifiedAt: result.verifiedAt ? result.verifiedAt.toISOString() : new Date().toISOString(),
+          timestamp: new Date().toISOString(),
+        });
+      }
+    } catch (socketErr) {
+      console.error('[ExitService] Error dispatching exit_verified event:', socketErr);
+    }
+
+    return result;
   }
 
   /**
