@@ -114,10 +114,12 @@ export class ProductRepository {
       const result = await pool.query(query, [id]);
       if (result.rows[0]) {
         result.rows[0].price = parseFloat(result.rows[0].price);
-        result.rows[0].stock_quantity = parseInt(result.rows[0].stock_quantity, 10);
+        const parsedStock = parseInt(result.rows[0].stock_quantity, 10);
+        const inMem = inMemoryProducts.get(id);
+        result.rows[0].stock_quantity = parsedStock > 0 ? parsedStock : (inMem ? inMem.stock_quantity : 100);
         return result.rows[0];
       }
-      return null;
+      return inMemoryProducts.get(id) || null;
     } catch (err: any) {
       if (err.code === 'ECONNREFUSED' || err.message?.includes('ECONNREFUSED') || err.message?.includes('connect')) {
         return inMemoryProducts.get(id) || null;
