@@ -1,5 +1,6 @@
 import { inventoryRepository, InventoryItem, InventoryStats } from '../repositories/inventoryRepository';
 import { productRepository } from '../repositories/productRepository';
+import { emitLowInventory } from '../socket/socketServer';
 
 export class InventoryService {
   async listInventory(options: {
@@ -61,7 +62,26 @@ export class InventoryService {
       throw err;
     }
 
-    return await inventoryRepository.updateStock(productId, data);
+    const updated = await inventoryRepository.updateStock(productId, data);
+
+    // Safe Real-Time Socket.IO Notification if stock is low
+    try {
+      if (updated && updated.quantity <= updated.low_stock_threshold) {
+        emitLowInventory({
+          productId: updated.product_id,
+          productName: updated.product_name,
+          barcode: updated.product_barcode,
+          category: updated.product_category,
+          stockQuantity: updated.quantity,
+          lowStockThreshold: updated.low_stock_threshold,
+          timestamp: new Date().toISOString(),
+        });
+      }
+    } catch (socketErr) {
+      console.error('[InventoryService] Error dispatching low_inventory event:', socketErr);
+    }
+
+    return updated;
   }
 
   async restockProduct(productId: string, quantityToAdd: number): Promise<InventoryItem> {
