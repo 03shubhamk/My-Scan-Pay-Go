@@ -11,6 +11,7 @@ import {
   Settings,
   ShoppingBag,
   LogOut,
+  CreditCard,
 } from 'lucide-react';
 import { useAuth } from '../features/auth/AuthContext';
 
@@ -21,7 +22,8 @@ export const Sidebar: React.FC = () => {
     { to: '/', label: 'Dashboard', icon: LayoutDashboard },
     { to: '/products', label: 'Products & Barcodes', icon: Package },
     { to: '/inventory', label: 'Inventory Management', icon: Boxes },
-    { to: '/orders', label: 'Orders & Payments', icon: ShoppingCart },
+    { to: '/orders', label: 'Orders Ledger', icon: ShoppingCart },
+    { to: '/payments', label: 'Payments & Settlement', icon: CreditCard },
     { to: '/exit-verifier', label: 'Exit Gate Verifier', icon: QrCode },
     { to: '/customers', label: 'Customers', icon: Users },
     { to: '/reports', label: 'Reports & Analytics', icon: BarChart3 },

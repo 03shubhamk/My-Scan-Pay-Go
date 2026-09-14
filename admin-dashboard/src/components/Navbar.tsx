@@ -1,6 +1,8 @@
 import React from 'react';
-import { Search, Bell, ShieldCheck, User } from 'lucide-react';
+import { Search, WifiOff, User } from 'lucide-react';
 import { useAuth } from '../features/auth/AuthContext';
+import { NotificationDropdown } from './NotificationDropdown';
+import { useNotifications } from '../context/NotificationContext';
 
 export interface HeaderProps {
   pageTitle?: string;
@@ -8,9 +10,10 @@ export interface HeaderProps {
 
 export const Navbar: React.FC<HeaderProps> = ({ pageTitle = 'Dashboard Overview' }) => {
   const { user } = useAuth();
+  const { socketStatus } = useNotifications();
 
   return (
-    <header className="h-16 bg-white border-b border-surface-border px-6 flex items-center justify-between sticky top-0 z-30 shadow-sm">
+    <header className="h-16 bg-white border-b border-surface-border px-6 flex items-center justify-between sticky top-0 z-30 shadow-xs">
       {/* Title & Page Header */}
       <div>
         <h1 className="text-lg font-bold text-text-primary">{pageTitle}</h1>
@@ -30,18 +33,32 @@ export const Navbar: React.FC<HeaderProps> = ({ pageTitle = 'Dashboard Overview'
       </div>
 
       {/* Right Header Actions */}
-      <div className="flex items-center gap-4">
-        {/* System Health Status Indicator */}
-        <div className="hidden sm:flex items-center gap-2 px-3 py-1 bg-emerald-50 border border-emerald-200 rounded-full text-xs font-medium text-emerald-800">
-          <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
-          <span>System Healthy</span>
+      <div className="flex items-center gap-3.5">
+        {/* System & Socket Sync Indicator */}
+        <div
+          className={`hidden sm:flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium border ${
+            socketStatus === 'connected'
+              ? 'bg-emerald-50 border-emerald-200 text-emerald-800'
+              : socketStatus === 'connecting'
+              ? 'bg-amber-50 border-amber-200 text-amber-800 animate-pulse'
+              : 'bg-slate-100 border-slate-200 text-slate-700'
+          }`}
+        >
+          {socketStatus === 'connected' ? (
+            <>
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+              <span>Real-Time Sync</span>
+            </>
+          ) : (
+            <>
+              <WifiOff className="w-3 h-3 text-amber-600" />
+              <span>REST Fallback</span>
+            </>
+          )}
         </div>
 
-        {/* Notifications */}
-        <button className="p-2 rounded-md text-slate-500 hover:bg-slate-100 transition-colors relative">
-          <Bell className="w-4 h-4" />
-          <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-primary animate-pulse" />
-        </button>
+        {/* Live Notification Dropdown Popover */}
+        <NotificationDropdown />
 
         {/* User Profile Avatar */}
         <div className="flex items-center gap-3 pl-3 border-l border-surface-border">
