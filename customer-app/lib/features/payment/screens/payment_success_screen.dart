@@ -24,10 +24,11 @@ class PaymentSuccessScreen extends StatelessWidget {
     final orderNumber = paymentResult.order?.orderNumber ??
         'ORD-${paymentResult.orderId.substring(0, paymentResult.orderId.length > 8 ? 8 : paymentResult.orderId.length).toUpperCase()}';
 
-    return WillPopScope(
-      onWillPop: () async {
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) {
+        if (didPop) return;
         Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
-        return false;
       },
       child: Scaffold(
         backgroundColor: AppColors.background,
@@ -131,9 +132,9 @@ class PaymentSuccessScreen extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(18),
                 decoration: BoxDecoration(
-                  color: AppColors.primaryFixedLight.withOpacity(0.35),
+                  color: AppColors.primaryFixedLight.withValues(alpha: 0.35),
                   borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: AppColors.primary.withOpacity(0.2), width: 1),
+                  border: Border.all(color: AppColors.primary.withValues(alpha: 0.2), width: 1),
                 ),
                 child: Column(
                   children: [

@@ -2,10 +2,8 @@ import '../../../core/network/api_client.dart';
 import '../../../models/payment_model.dart';
 
 class PaymentService {
-  /**
-   * Request backend to create Razorpay order for an existing or new order.
-   * Only receives public keyId and razorpayOrderId.
-   */
+  /// Request backend to create Razorpay order for an existing or new order.
+  /// Only receives public keyId and razorpayOrderId.
   static Future<RazorpayOrderData> createPaymentOrder({
     required String orderId,
     required String? token,
@@ -23,9 +21,7 @@ class PaymentService {
     }
   }
 
-  /**
-   * Request backend to cryptographically verify Razorpay signature and capture payment.
-   */
+  /// Request backend to cryptographically verify Razorpay signature and capture payment.
   static Future<PaymentResult> verifyPayment({
     required PaymentVerificationPayload payload,
     required String? token,
@@ -43,9 +39,7 @@ class PaymentService {
     }
   }
 
-  /**
-   * Report payment failure to backend
-   */
+  /// Report payment failure to backend
   static Future<void> reportPaymentFailure({
     required String orderId,
     String? razorpayPaymentId,

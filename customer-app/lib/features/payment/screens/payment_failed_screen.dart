@@ -75,11 +75,11 @@ class PaymentFailedScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
+                  const Row(
                     children: [
-                      const Icon(Icons.info_outline, size: 18, color: AppColors.error),
-                      const SizedBox(width: 8),
-                      const Text(
+                      Icon(Icons.info_outline, size: 18, color: AppColors.error),
+                      SizedBox(width: 8),
+                      Text(
                         'Reason for Failure',
                         style: TextStyle(fontWeight: FontWeight.w800, fontSize: 13, color: AppColors.error),
                       ),
@@ -90,7 +90,7 @@ class PaymentFailedScreen extends StatelessWidget {
                     width: double.infinity,
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
-                      color: AppColors.errorBg.withOpacity(0.5),
+                      color: AppColors.errorBg.withValues(alpha: 0.5),
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: Text(

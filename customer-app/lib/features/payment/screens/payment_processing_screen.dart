@@ -41,8 +41,8 @@ class _PaymentProcessingScreenState extends State<PaymentProcessingScreen>
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async => false, // Prevent accidental back during payment verification
+    return PopScope(
+      canPop: false, // Prevent accidental back during payment verification
       child: Scaffold(
         backgroundColor: AppColors.background,
         body: SafeArea(
@@ -61,7 +61,7 @@ class _PaymentProcessingScreenState extends State<PaymentProcessingScreen>
                     height: 120,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      color: AppColors.primaryFixedLight.withOpacity(0.5),
+                      color: AppColors.primaryFixedLight.withValues(alpha: 0.5),
                     ),
                     child: Center(
                       child: Container(
@@ -117,7 +117,7 @@ class _PaymentProcessingScreenState extends State<PaymentProcessingScreen>
                     border: Border.all(color: AppColors.outlineVariant, width: 0.8),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.03),
+                        color: Colors.black.withValues(alpha: 0.03),
                         blurRadius: 10,
                         offset: const Offset(0, 4),
                       ),

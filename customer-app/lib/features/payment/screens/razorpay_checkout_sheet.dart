@@ -172,6 +172,7 @@ class _RazorpayCheckoutSheetState extends State<RazorpayCheckoutSheet> {
                     // Generate simulated payment result with client payment ID
                     final paymentId = 'pay_${DateTime.now().millisecondsSinceEpoch}_test';
                     final orderId = widget.orderData.razorpayOrderId;
+                    final nav = Navigator.of(context);
 
                     // Note: Flutter client sends paymentId and orderId to backend.
                     // For test simulation, we calculate or send signature or trigger backend verification.
@@ -180,7 +181,7 @@ class _RazorpayCheckoutSheetState extends State<RazorpayCheckoutSheet> {
                     await Future.delayed(const Duration(milliseconds: 600));
 
                     if (!mounted) return;
-                    Navigator.pop(context);
+                    nav.pop();
 
                     widget.onSuccess(paymentId, orderId, 'test_signature_simulated');
                   },
@@ -213,7 +214,7 @@ class _RazorpayCheckoutSheetState extends State<RazorpayCheckoutSheet> {
       child: Container(
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: isSelected ? AppColors.primaryFixedLight.withOpacity(0.4) : AppColors.surface,
+          color: isSelected ? AppColors.primaryFixedLight.withValues(alpha: 0.4) : AppColors.surface,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
             color: isSelected ? AppColors.primary : AppColors.outlineVariant,

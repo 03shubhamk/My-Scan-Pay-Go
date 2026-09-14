@@ -37,9 +37,7 @@ class PaymentProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  /**
-   * Step 1: Request backend to create Razorpay Order
-   */
+  /// Step 1: Request backend to create Razorpay Order
   Future<RazorpayOrderData?> initiatePayment({
     required String orderId,
     required String? token,
@@ -66,9 +64,7 @@ class PaymentProvider extends ChangeNotifier {
     }
   }
 
-  /**
-   * Step 2: Handle Gateway Success & Trigger Backend Cryptographic Verification
-   */
+  /// Step 2: Handle Gateway Success & Trigger Backend Cryptographic Verification
   Future<PaymentResult?> handlePaymentSuccess({
     required String razorpayPaymentId,
     required String razorpayOrderId,
@@ -104,9 +100,7 @@ class PaymentProvider extends ChangeNotifier {
     }
   }
 
-  /**
-   * Step 3: Handle Gateway Failure or Cancellation
-   */
+  /// Step 3: Handle Gateway Failure or Cancellation
   Future<void> handlePaymentError({
     required String code,
     required String message,
@@ -127,18 +121,14 @@ class PaymentProvider extends ChangeNotifier {
     }
   }
 
-  /**
-   * Mark as Pending (for asynchronous bank / UPI confirmations)
-   */
+  /// Mark as Pending (for asynchronous bank / UPI confirmations)
   void markPending({String? reason}) {
     _state = PaymentState.pending;
     _errorMessage = reason ?? 'Payment is under processing by the banking gateway';
     notifyListeners();
   }
 
-  /**
-   * Retry Payment for current order
-   */
+  /// Retry Payment for current order
   Future<RazorpayOrderData?> retryPayment({required String? token}) async {
     if (_currentOrderId == null) return null;
     return await initiatePayment(orderId: _currentOrderId!, token: token);
