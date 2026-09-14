@@ -4,6 +4,8 @@ import { env } from '../config/env';
 import { orderRepository, OrderWithItems } from '../repositories/orderRepository';
 import { paymentRepository } from '../repositories/paymentRepository';
 import { userRepository } from '../repositories/userRepository';
+import { productRepository } from '../repositories/productRepository';
+import { emitPaymentCompleted, emitLowInventory } from '../socket/socketServer';
 import { Payment, ExitVerification } from '../types';
 
 export interface RazorpayOrderResponse {
@@ -212,6 +214,40 @@ export class PaymentService {
         razorpayPaymentId,
         exitVerificationToken
       );
+
+    // 6. Safe Real-Time Socket.IO Notification (Non-blocking)
+    try {
+      const user = await userRepository.findById(userId);
+      emitPaymentCompleted({
+        orderId: updatedOrder.id,
+        orderNumber: updatedOrder.order_number,
+        razorpayPaymentId,
+        razorpayOrderId,
+        amount: updatedOrder.total_amount,
+        customerName: user ? user.name : 'Customer',
+        timestamp: new Date().toISOString(),
+      });
+
+      // 7. Check if purchased items triggered low inventory thresholds
+      if (updatedOrder.items && updatedOrder.items.length > 0) {
+        for (const item of updatedOrder.items) {
+          const prod = await productRepository.findById(item.product_id);
+          if (prod && prod.stock_quantity <= prod.low_stock_threshold) {
+            emitLowInventory({
+              productId: prod.id,
+              productName: prod.name,
+              barcode: prod.barcode,
+              category: prod.category,
+              stockQuantity: prod.stock_quantity,
+              lowStockThreshold: prod.low_stock_threshold,
+              timestamp: new Date().toISOString(),
+            });
+          }
+        }
+      }
+    } catch (socketErr) {
+      console.error('[PaymentService] Error dispatching payment/inventory socket events:', socketErr);
+    }
 
     return {
       orderId: updatedOrder.id,
