@@ -30,3 +30,11 @@ export const env = {
   CORS_ORIGIN: process.env.CORS_ORIGIN || '*',
 };
 
+// Security Assertion: Ensure production deployment does not run with default fallback credentials
+if (env.NODE_ENV === 'production') {
+  const dangerousDefaults = ['dev_jwt_secret_key_12345', 'exit_qr_hmac_secret_key_45678', 'YourRazorpaySecretHere'];
+  if (dangerousDefaults.includes(env.JWT_SECRET) || dangerousDefaults.includes(env.EXIT_QR_SECRET)) {
+    throw new Error('[FATAL SECURITY ERROR] Application cannot start in production with default development secrets.');
+  }
+}
+
