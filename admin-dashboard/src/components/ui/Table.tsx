@@ -32,7 +32,7 @@ export function Table<T>({
 }: TableProps<T>) {
   if (children) {
     return (
-      <div className={`bg-white border border-surface-border rounded-lg overflow-hidden shadow-sm ${className}`}>
+      <div className={`bg-white border border-surface-border rounded-xl overflow-hidden shadow-xs ${className}`}>
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">{children}</table>
         </div>
@@ -41,11 +41,11 @@ export function Table<T>({
   }
 
   return (
-    <div className={`bg-white border border-surface-border rounded-lg overflow-hidden shadow-sm ${className}`}>
+    <div className={`bg-white border border-surface-border rounded-xl overflow-hidden shadow-xs ${className}`}>
       <div className="overflow-x-auto">
         <table className="w-full text-left border-collapse">
           <thead>
-            <tr className="bg-slate-50 border-b border-surface-border">
+            <tr className="bg-slate-50/80 border-b border-surface-border">
               {(columns || []).map((col, idx) => (
                 <th
                   key={idx}
