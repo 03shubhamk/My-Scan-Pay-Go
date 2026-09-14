@@ -1,6 +1,7 @@
 import { productRepository } from '../repositories/productRepository';
 import { orderRepository, OrderWithItems } from '../repositories/orderRepository';
 import { createOrderSchema, CreateOrderInput } from '../validators/orderValidator';
+import { emitNewOrder } from '../socket/socketServer';
 
 export class OrderService {
   async createOrder(userId: string, input: CreateOrderInput): Promise<OrderWithItems> {
@@ -59,6 +60,16 @@ export class OrderService {
       userId,
       totalAmount: finalTotalAmount,
       items: calculatedItems,
+    });
+
+    // 6. Safe Real-Time Socket.IO Notification (Non-blocking)
+    emitNewOrder({
+      orderId: createdOrder.id,
+      orderNumber: createdOrder.order_number,
+      userId,
+      totalAmount: createdOrder.total_amount,
+      itemsCount: createdOrder.items.length,
+      timestamp: new Date().toISOString(),
     });
 
     return createdOrder;
