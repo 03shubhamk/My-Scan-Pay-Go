@@ -244,7 +244,7 @@ class _ScannerScreenState extends State<ScannerScreen> with SingleTickerProvider
           // Dark Overlay with Cutout Window
           ColorFiltered(
             colorFilter: ColorFilter.mode(
-              Colors.black.withOpacity(0.6),
+              Colors.black.withValues(alpha: 0.6),
               BlendMode.srcOut,
             ),
             child: Stack(
@@ -292,7 +292,7 @@ class _ScannerScreenState extends State<ScannerScreen> with SingleTickerProvider
                             borderRadius: BorderRadius.circular(2),
                             boxShadow: [
                               BoxShadow(
-                                color: AppColors.primary.withOpacity(0.8),
+                                color: AppColors.primary.withValues(alpha: 0.8),
                                 blurRadius: 8,
                                 spreadRadius: 2,
                               ),
