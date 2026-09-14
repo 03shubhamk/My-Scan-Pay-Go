@@ -8,7 +8,6 @@ import '../../auth/auth_provider.dart';
 import '../../cart/cart_provider.dart';
 import '../../payment/payment_provider.dart';
 import '../../payment/screens/payment_failed_screen.dart';
-import '../../payment/screens/payment_pending_screen.dart';
 import '../../payment/screens/payment_processing_screen.dart';
 import '../../payment/screens/payment_success_screen.dart';
 import '../../payment/screens/razorpay_checkout_sheet.dart';
@@ -262,7 +261,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                     isLoading: _isProcessingCheckout || ordersProvider.isLoading || paymentProvider.isProcessing,
                     onPressed: (_isProcessingCheckout || ordersProvider.isLoading || paymentProvider.isProcessing)
                         ? null
-                        : () => _startPaymentFlow(context),
+                        : _startPaymentFlow,
                   ),
                   const SizedBox(height: 24),
                 ],
@@ -271,7 +270,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     );
   }
 
-  Future<void> _startPaymentFlow(BuildContext context) async {
+  Future<void> _startPaymentFlow() async {
     final cart = context.read<CartProvider>();
     final auth = context.read<AuthProvider>();
     final ordersProvider = context.read<OrdersProvider>();
@@ -287,9 +286,10 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       );
 
       if (newOrder == null) {
+        if (!mounted) return;
         setState(() => _isProcessingCheckout = false);
-        if (mounted && ordersProvider.errorMessage != null) {
-          _showErrorDialog(context, ordersProvider.errorMessage!);
+        if (ordersProvider.errorMessage != null) {
+          _showErrorDialog(ordersProvider.errorMessage!);
         }
         return;
       }
@@ -300,16 +300,15 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         token: auth.token,
       );
 
+      if (!mounted) return;
       setState(() => _isProcessingCheckout = false);
 
       if (razorpayOrder == null) {
-        if (mounted && paymentProvider.errorMessage != null) {
-          _showErrorDialog(context, paymentProvider.errorMessage!);
+        if (paymentProvider.errorMessage != null) {
+          _showErrorDialog(paymentProvider.errorMessage!);
         }
         return;
       }
-
-      if (!mounted) return;
 
       // Step 3: Open Razorpay Checkout Sheet
       await RazorpayCheckoutSheet.show(
@@ -317,7 +316,6 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         orderData: razorpayOrder,
         onSuccess: (paymentId, orderId, signature) async {
           _processVerification(
-            context: context,
             order: newOrder,
             razorpayPaymentId: paymentId,
             razorpayOrderId: orderId,
@@ -325,6 +323,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
           );
         },
         onFailure: (code, message) {
+          if (!mounted) return;
           Navigator.push(
             context,
             MaterialPageRoute(
@@ -334,7 +333,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                 errorMessage: message,
                 onRetry: () {
                   Navigator.pop(context);
-                  _startPaymentFlow(context);
+                  _startPaymentFlow();
                 },
               ),
             ),
@@ -342,15 +341,13 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         },
       );
     } catch (e) {
+      if (!mounted) return;
       setState(() => _isProcessingCheckout = false);
-      if (mounted) {
-        _showErrorDialog(context, e.toString());
-      }
+      _showErrorDialog(e.toString());
     }
   }
 
   Future<void> _processVerification({
-    required BuildContext context,
     required OrderModel order,
     required String razorpayPaymentId,
     required String razorpayOrderId,
@@ -406,7 +403,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
             errorMessage: paymentProvider.errorMessage ?? 'Payment signature verification failed.',
             onRetry: () {
               Navigator.pop(context);
-              _startPaymentFlow(context);
+              _startPaymentFlow();
             },
           ),
         ),
@@ -414,7 +411,8 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     }
   }
 
-  void _showErrorDialog(BuildContext context, String message) {
+  void _showErrorDialog(String message) {
+    if (!mounted) return;
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
