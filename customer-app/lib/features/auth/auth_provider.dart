@@ -59,14 +59,12 @@ class AuthProvider extends ChangeNotifier {
       }
     } catch (_) {
       // If server unreachable during session verification, preserve offline session profile
-      if (_user == null) {
-        _user = {
-          'id': 'cust-1',
-          'name': 'Valued Customer',
-          'email': 'customer@scanpaygo.com',
-          'role': 'CUSTOMER',
-        };
-      }
+      _user ??= {
+        'id': 'cust-1',
+        'name': 'Valued Customer',
+        'email': 'customer@scanpaygo.com',
+        'role': 'CUSTOMER',
+      };
     }
   }
 
