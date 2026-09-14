@@ -13,6 +13,7 @@ import exitRoutes from './routes/exitRoutes';
 import adminRoutes from './routes/adminRoutes';
 import { authenticateUser, requireAdmin } from './middleware/auth';
 import { errorHandler } from './middleware/errorHandler';
+import { globalLimiter } from './middleware/rateLimiter';
 import { env } from './config/env';
 
 const app = express();
@@ -20,11 +21,17 @@ const app = express();
 // Secure HTTP Headers
 app.use(helmet());
 
-// CORS Configuration
-app.use(cors({
-  origin: env.CORS_ORIGIN === '*' ? (_origin, callback) => callback(null, true) : env.CORS_ORIGIN,
-  credentials: true
-}));
+// CORS Configuration (Strict origin policy with credentials guard)
+const isWildcardCors = env.CORS_ORIGIN === '*';
+app.use(
+  cors({
+    origin: isWildcardCors ? '*' : env.CORS_ORIGIN.split(',').map((s) => s.trim()),
+    credentials: !isWildcardCors,
+  })
+);
+
+// Global Rate Limiting
+app.use(globalLimiter);
 
 // Body Parsers
 app.use(express.json());
