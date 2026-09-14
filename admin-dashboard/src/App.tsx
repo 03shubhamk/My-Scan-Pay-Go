@@ -1,6 +1,8 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './features/auth/AuthContext';
+import { NotificationProvider } from './context/NotificationContext';
+import { ToastContainer } from './components/ToastContainer';
 import { ProtectedRoute } from './features/auth/ProtectedRoute';
 import { LoginPage } from './features/auth/LoginPage';
 import { DashboardOverview } from './features/dashboard/DashboardOverview';
@@ -9,6 +11,7 @@ import { AddProductPage } from './features/products/AddProductPage';
 import { EditProductPage } from './features/products/EditProductPage';
 import { InventoryPage } from './features/inventory/InventoryPage';
 import { OrdersPage } from './features/orders/OrdersPage';
+import { PaymentsPage } from './features/payments/PaymentsPage';
 import { ExitScanPage } from './features/exit-verifier/ExitScanPage';
 import { CustomersPage } from './features/customers/CustomersPage';
 import { ReportsPage } from './features/reports/ReportsPage';
@@ -17,10 +20,12 @@ import { SettingsPage } from './features/settings/SettingsPage';
 export const App: React.FC = () => {
   return (
     <AuthProvider>
-      <BrowserRouter>
-        <Routes>
-          {/* Public Login Route */}
-          <Route path="/login" element={<LoginPage />} />
+      <NotificationProvider>
+        <BrowserRouter>
+          <ToastContainer />
+          <Routes>
+            {/* Public Login Route */}
+            <Route path="/login" element={<LoginPage />} />
 
           {/* Protected Admin Routes */}
           <Route
@@ -77,6 +82,14 @@ export const App: React.FC = () => {
               </ProtectedRoute>
             }
           />
+          <Route
+            path="/payments"
+            element={
+              <ProtectedRoute>
+                <PaymentsPage />
+              </ProtectedRoute>
+            }
+          />
 
           {/* Exit Gate Verifier */}
           <Route
@@ -122,8 +135,9 @@ export const App: React.FC = () => {
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </BrowserRouter>
-    </AuthProvider>
-  );
+    </NotificationProvider>
+  </AuthProvider>
+);
 };
 
 export default App;
