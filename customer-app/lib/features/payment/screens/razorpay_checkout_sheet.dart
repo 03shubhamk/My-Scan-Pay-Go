@@ -241,7 +241,11 @@ class _RazorpayCheckoutSheetState extends State<RazorpayCheckoutSheet> {
                 ],
               ),
             ),
-            if (isSelected) const Icon(Icons.check_circle, color: AppColors.primary, size: 20),
+            Icon(
+              isSelected ? Icons.radio_button_checked : Icons.radio_button_off,
+              color: isSelected ? AppColors.primary : AppColors.outline,
+              size: 20,
+            ),
           ],
         ),
       ),
