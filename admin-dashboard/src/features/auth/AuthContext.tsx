@@ -36,13 +36,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             logout();
           }
         } catch {
-          // If token verification fails, allow fallback mock admin session for offline UI inspection
-          setUser({
-            id: 'u1000000-0000-0000-0000-000000000001',
-            name: 'Store Administrator',
-            email: 'admin@scanpaygo.com',
-            role: 'ADMIN',
-          });
+          logout();
         }
       }
       setIsLoading(false);
