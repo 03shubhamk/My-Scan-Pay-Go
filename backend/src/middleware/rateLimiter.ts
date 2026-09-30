@@ -62,3 +62,18 @@ export const paymentLimiter = rateLimit({
     message: 'Too many checkout requests. Please try again shortly.',
   },
 });
+
+/**
+ * 5. Barcode Scanner Rate Limiter
+ */
+export const barcodeLimiter = rateLimit({
+  windowMs: 60 * 1000, // 1 minute
+  max: 120, // 2 scans per second max
+  standardHeaders: true,
+  legacyHeaders: false,
+  skip: () => isTest,
+  message: {
+    success: false,
+    message: 'Too many barcode lookups. Please slow down scan speed.',
+  },
+});
