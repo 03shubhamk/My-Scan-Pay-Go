@@ -10,4 +10,23 @@ class CartItemModel {
   });
 
   double get subtotal => product.effectivePrice * quantity;
+
+  CartItemModel copyWith({
+    ProductModel? product,
+    int? quantity,
+  }) {
+    return CartItemModel(
+      product: product ?? this.product,
+      quantity: quantity ?? this.quantity,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'productId': product.id,
+      'quantity': quantity,
+      'price': product.effectivePrice,
+      'subtotal': subtotal,
+    };
+  }
 }
