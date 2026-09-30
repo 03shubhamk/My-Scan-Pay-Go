@@ -79,3 +79,40 @@ export interface ExitVerification {
   verified_at?: Date;
   created_at: Date;
 }
+
+export interface RazorpayWebhookEvent {
+  entity: string;
+  account_id: string;
+  event: string;
+  contains: string[];
+  payload: {
+    payment?: {
+      entity: {
+        id: string;
+        order_id: string;
+        amount: number;
+        currency: string;
+        status: string;
+      };
+    };
+    order?: {
+      entity: {
+        id: string;
+        amount: number;
+        status: string;
+      };
+    };
+  };
+  created_at: number;
+}
+
+export interface SystemNotification {
+  id: string;
+  type: 'NEW_ORDER' | 'PAYMENT_COMPLETED' | 'LOW_INVENTORY' | 'EXIT_VERIFIED';
+  title: string;
+  message: string;
+  data?: Record<string, any>;
+  timestamp: string;
+  read: boolean;
+}
+
