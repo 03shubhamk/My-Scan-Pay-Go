@@ -123,7 +123,18 @@ scan-pay-go/
 ---
 
 
+## 👥 Default Demo Credentials
+
+| Role | Email | Password |
+| :--- | :--- | :--- |
+| **Store Administrator** | `admin@scanpaygo.com` | `Password@123` |
+| **Customer Shopper** | `customer@scanpaygo.com` | `Password@123` |
+
+---
+
 ## 📜 Documentation
 - See [`docs/architecture.md`](docs/architecture.md) for full technical design details.
 - See [`docs/api-spec.md`](docs/api-spec.md) for API endpoint specifications.
+- See [`docs/security-architecture.md`](docs/security-architecture.md) for cryptographic & RBAC specifications.
 - See [`docs/stitch-design-mapping.md`](docs/stitch-design-mapping.md) for UI design system tokens.
+- See [`docs/deployment.md`](docs/deployment.md) for complete production deployment runbook.
