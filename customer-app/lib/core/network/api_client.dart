@@ -58,6 +58,51 @@ class ApiClient {
     }
   }
 
+  static Future<Map<String, dynamic>> put(
+    String endpoint, {
+    required Map<String, dynamic> body,
+    String? token,
+  }) async {
+    final url = Uri.parse('${ApiConstants.baseUrl}$endpoint');
+    final headers = {
+      'Content-Type': 'application/json',
+      if (token != null) 'Authorization': 'Bearer $token',
+    };
+
+    try {
+      final response = await http
+          .put(url, headers: headers, body: jsonEncode(body))
+          .timeout(const Duration(seconds: 12));
+
+      return _handleResponse(response);
+    } catch (e) {
+      if (e is ApiException) rethrow;
+      throw ApiException('Network connection error. Is the backend server running on port 5000?');
+    }
+  }
+
+  static Future<Map<String, dynamic>> delete(
+    String endpoint, {
+    String? token,
+  }) async {
+    final url = Uri.parse('${ApiConstants.baseUrl}$endpoint');
+    final headers = {
+      'Content-Type': 'application/json',
+      if (token != null) 'Authorization': 'Bearer $token',
+    };
+
+    try {
+      final response = await http
+          .delete(url, headers: headers)
+          .timeout(const Duration(seconds: 12));
+
+      return _handleResponse(response);
+    } catch (e) {
+      if (e is ApiException) rethrow;
+      throw ApiException('Network connection error. Is the backend server running on port 5000?');
+    }
+  }
+
   static Map<String, dynamic> _handleResponse(http.Response response) {
     Map<String, dynamic> data;
     try {
